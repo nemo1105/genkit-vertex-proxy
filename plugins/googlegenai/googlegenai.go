@@ -162,9 +162,23 @@ func (v *VertexAI) Init(ctx context.Context) []api.Action {
 			panic("Vertex AI requires setting GOOGLE_CLOUD_LOCATION or GOOGLE_CLOUD_REGION in the environment. You can get a location at https://cloud.google.com/vertex-ai/docs/general/locations")
 		}
 	}
+
+	baseTransport := http.DefaultTransport
+	if v.ProxyURL != "" {
+		u, parseErr := url.Parse(v.ProxyURL)
+		if parseErr != nil {
+			panic(fmt.Errorf("failed to parse proxy url: %w", parseErr))
+		}
+		baseTransport = &http.Transport{
+			Proxy: http.ProxyURL(u),
+		}
+	}
+
 	detectOpts := &credentials.DetectOptions{
 		Scopes: []string{"https://www.googleapis.com/auth/cloud-platform"},
+		Client: &http.Client{Transport: baseTransport},
 	}
+
 	if len(v.CredentialsJSON) > 0 {
 		detectOpts.CredentialsJSON = v.CredentialsJSON
 	} else if v.CredentialsFile != "" {
@@ -178,17 +192,6 @@ func (v *VertexAI) Init(ctx context.Context) []api.Action {
 	quotaProjectID, err := cred.QuotaProjectID(ctx)
 	if err != nil {
 		panic(fmt.Errorf("failed to get quota project ID: %v", quotaProjectID))
-	}
-
-	baseTransport := http.DefaultTransport
-	if v.ProxyURL != "" {
-		u, parseErr := url.Parse(v.ProxyURL)
-		if parseErr != nil {
-			panic(fmt.Errorf("failed to parse proxy url: %w", parseErr))
-		}
-		baseTransport = &http.Transport{
-			Proxy: http.ProxyURL(u),
-		}
 	}
 
 	httpClient, err := httptransport.NewClient(&httptransport.Options{
