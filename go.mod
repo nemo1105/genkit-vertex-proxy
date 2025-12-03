@@ -1,4 +1,4 @@
-module vertexproxy
+module github.com/nemo1105/genkit-vertex-proxy
 
 go 1.24.1
 
