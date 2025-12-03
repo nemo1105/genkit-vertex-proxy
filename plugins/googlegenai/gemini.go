@@ -28,9 +28,9 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"vertexproxy/internal"
-	"vertexproxy/internal/base"
-	"vertexproxy/plugins/internal/uri"
+	"github.com/nemo1105/genkit-vertex-proxy/internal"
+	"github.com/nemo1105/genkit-vertex-proxy/internal/base"
+	"github.com/nemo1105/genkit-vertex-proxy/plugins/internal/uri"
 
 	"github.com/firebase/genkit/go/ai"
 	"github.com/firebase/genkit/go/core"
